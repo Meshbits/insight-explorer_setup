@@ -58,7 +58,7 @@ export SCRIPTNAME=$(realpath $0)
 export SCRIPTPATH=$(dirname $SCRIPTNAME)
 export KOMODO_SRC_DIR="${HOME}/komodo/src"
 export KOMODO_CONF_DIR="${HOME}/.komodo"
-export VAR_PROC $(cat /proc/cpuinfo | grep processor | wc -l)
+export VAR_PROC=$(cat /proc/cpuinfo | grep processor | wc -l)
 
 [[ -z ${SCRIPTUSER+x} ]] && export SCRIPTUSER=meshbits
 [[ -z ${KOMODO_SRC_DIR+x} ]] && export KOMODO_SRC_DIR="/home/${SCRIPTUSER}/komodo"
