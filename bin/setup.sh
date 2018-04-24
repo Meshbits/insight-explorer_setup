@@ -15,17 +15,15 @@ while [[ $# -gt 0 ]]; do
 		-h|--help)
 		cat >&2 <<HELP
 Usage: userdata.sh [OPTIONS]
-Setup and configure insight-explorer.
-Current focus is on Komodo AssetChains for Transaction tests; hence TXSCL[x] onwards.
-Currently assumes that you have Komodo setup as:
+Setup and configure komodod, insight-explorer.
 - ${HOME}/komodo/src/komodo/komodod
 - ${HOME}/komodo/src/komodo/komodo-cli
 - ${HOME}/.komodo/${AC}/$AC.conf - eg: [ ${HOME}/.komodo/TXSCL/$TXSCL.conf ]
 
 -h | --help                           Show this help
 --username                            Username to run daemons
---ac-start                            Assetchain start counter
---ac-end                              Assetchain end counter
+--ac-start                            Assetchain start counter; eg: 001
+--ac-end                              Assetchain end counter; eg: 100
 --insight-repository                  Insight repository; defaults to
                                       https://github.com/KomodoPlatform/insight-ui-komodo for now
 -ev | --example-variable              Set an EXAMPLE_VARIABLE variable to be use with the script
@@ -60,6 +58,12 @@ export SCRIPTNAME=$(realpath $0)
 export SCRIPTPATH=$(dirname $SCRIPTNAME)
 export KOMODO_SRC_DIR="${HOME}/komodo/src"
 export KOMODO_CONF_DIR="${HOME}/.komodo"
+export VAR_PROC $(cat /proc/cpuinfo | grep processor | wc -l)
+
+[[ -z ${SCRIPTUSER+x} ]] && export SCRIPTUSER=meshbits
+[[ -z ${KOMODO_SRC_DIR+x} ]] && export KOMODO_SRC_DIR="/home/${SCRIPTUSER}/komodo"
+[[ -z ${KOMODO_REPOSITORY+x} ]] && export KOMODO_REPOSITORY='https://github.com/jl777/komodo.git'
+[[ -z ${KOMODO_BRANCH+x} ]] && export KOMODO_BRANCH=jl777
 
 # Functions
 function komodod_run () {
@@ -91,14 +95,44 @@ function komodod_run () {
     $komodod_run_DAEMON $komodod_run_GEN $komodod_run_PUBKEY
 }
 
-if [[ -e ${KOMODO_SRC_DIR}/komodod ]]; then
+# Add ${SCRIPTUSER} as the user if doesn't already exist
+id -u ${SCRIPTUSER} &>/dev/null || adduser --disabled-password --gecos "" ${SCRIPTUSER}
 
-  # Run it for `TXSCL` first and then for the rest
-  komodod_run -daemon
+# Enforce creation of sudoers entry for the ${SCRIPTUSER} user
+echo "${SCRIPTUSER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${SCRIPTUSER}
+chmod 0400 /etc/sudoers.d/${SCRIPTUSER}
 
-  for ((i=${AC_START}; i<${AC_END}; i++)); do
-    komodod_run -daemon
-    # This will create ${HOME}/.komodo/TXSCL${i}/TXSCL${i}.conf
-  done
+#To disable the above systemd service/timer else it can cause conflict with the following apt-get commands:
+echo "==> Disabling the release upgrader"
+sed -i.bak 's/^Prompt=.*$/Prompt=never/' /etc/update-manager/release-upgrades
 
-fi
+for item in 'apt-daily.service' 'apt-daily.timer'; do
+  systemctl stop $item
+  systemctl disable $item
+done
+
+# wait until `apt-get updated` has been killed
+while ! (systemctl list-units --all apt-daily.service | fgrep -q dead)
+do
+  sleep 1;
+done
+
+# Just in case, any process is left running
+systemctl kill --kill-who=all apt-daily.service
+systemctl mask apt-daily.service
+systemctl daemon-reload
+
+# This is needed in case packages or database is corrupted
+dpkg --configure -a
+
+# Run update and install basic stuff
+apt-get -qq update
+export DEBIAN_FRONTEND=noninteractive
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -qq \
+  upgrade
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -qq \
+  install \
+  git sudo jq dnsutils wget tree inotify-tools pigz
+
+# Setup komodod
+sudo -H -E -u ${SCRIPTUSER} bash ${SCRIPTPATH}/setup_komodod.sh 2>&1 | tee -a ${userdatasetup_log}
