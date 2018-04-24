@@ -81,8 +81,11 @@ function komodod_run () {
     esac
     shift
   done
-  ${KOMODO_SRC_DIR}/src/komodod -ac_name=TXSCL${komodod_run_SEQUENCE} -ac_supply=100000000 -addnode=54.36.176.84 \
-    $komodod_run_DAEMON $komodod_run_GEN $komodod_run_PUBKEY
+
+  if ! $(ps aux | grep -w "ac_name=TXSCL${komodod_run_SEQUENCE}" | grep -v grep >& /dev/null ); then
+    ${KOMODO_SRC_DIR}/src/komodod -ac_name=TXSCL${komodod_run_SEQUENCE} -ac_supply=100000000 -addnode=54.36.176.84 \
+      $komodod_run_DAEMON $komodod_run_GEN $komodod_run_PUBKEY
+  fi
 }
 
 
@@ -91,7 +94,7 @@ if [[ -f ${KOMODO_SRC_DIR}/src/komodod ]]; then
   # Run it for `TXSCL` first and then for the rest
   #komodod_run -daemon
 
-  for (( i==${AC_START}; i<${AC_END}; i++ )); do
+  for (( i=${AC_START}; i<${AC_END}; i++ )); do
     komodod_run -seq $i -daemon
     # This will create ${HOME}/.komodo/TXSCL${i}/TXSCL${i}.conf
 
