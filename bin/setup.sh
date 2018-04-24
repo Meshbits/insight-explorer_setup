@@ -65,35 +65,29 @@ export VAR_PROC $(cat /proc/cpuinfo | grep processor | wc -l)
 [[ -z ${KOMODO_REPOSITORY+x} ]] && export KOMODO_REPOSITORY='https://github.com/jl777/komodo.git'
 [[ -z ${KOMODO_BRANCH+x} ]] && export KOMODO_BRANCH=jl777
 
-# Functions
-function komodod_run () {
-  while [[ $# -gt 0 ]]; do
-  	key="$1"
-  	case $key in
-      -pubkey)
-        export komodod_run_PUBKEY="-pubkey=${2}"
-        shift
-      ;;
-      -SEQ)
-        export komodod_run_SEQUENCE="${2}"
-        shift
-      ;;
-      -daemon)
-        export komodod_run_DAEMON="-daemon"
-      ;;
-      -gen)
-        export komodod_run_GEN="-gen"
-      ;;
-      *)
-        echo "WARNING: Unknown option $key" >&2
-        exit 1
-      ;;
-    esac
-    shift
-  done
-  ${KOMODO_SRC_DIR}/komodod -ac_name=TXSCL${komodod_run_SEQUENCE} -ac_supply=100000000 -addnode=54.36.176.84 \
-    $komodod_run_DAEMON $komodod_run_GEN $komodod_run_PUBKEY
-}
+#==================================================#
+# These are probably going to not be needed on a physical hardware #
+
+# Disable unnecessary services
+for list in iscsid lvm2-lvmetad mdadm
+do
+  systemctl stop ${list}
+  systemctl disable ${list}
+done
+
+# Create a swapfile for Cloud Instances
+if [[ ! -f /swapfile ]]; then
+  dd if=/dev/zero of=/swapfile count=2048 bs=1M
+  chmod 0600 /swapfile
+  mkswap -v1 /swapfile
+  swapon /swapfile
+
+  # A better way is to put this in fstab
+  grep -q "swapon /swapfile" /etc/rc.local || \
+  sed -i "\$iswapon /swapfile" /etc/rc.local
+fi
+
+#==================================================#
 
 # Add ${SCRIPTUSER} as the user if doesn't already exist
 id -u ${SCRIPTUSER} &>/dev/null || adduser --disabled-password --gecos "" ${SCRIPTUSER}
@@ -132,7 +126,13 @@ apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold
   upgrade
 apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -qq \
   install \
-  git sudo jq dnsutils wget tree inotify-tools pigz
+  git sudo jq dnsutils wget tree inotify-tools
+
+# Install nodejs
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Install mongodb
 
 # Setup komodod
-sudo -H -E -u ${SCRIPTUSER} bash ${SCRIPTPATH}/setup_komodod.sh 2>&1 | tee -a ${userdatasetup_log}
+sudo -H -E -u ${SCRIPTUSER} bash ${SCRIPTPATH}/setup_komodod.sh 2>&1 | tee # -a ${userdatasetup_log}
