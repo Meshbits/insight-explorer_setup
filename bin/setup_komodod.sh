@@ -19,6 +19,9 @@ apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold
   libgmp3-dev
 EOF
 
+[[ -d ${HOME}/.komodo/bin ]] || mkdir -p ${HOME}/.komodo/bin
+
+
 if [[ ! $DONT_BUILD ]]; then
 
   #### Install nanomsg
@@ -59,55 +62,18 @@ sudo chmod +x /usr/local/bin/komodod
 
 echo -e "## Komodod Daemon has been configured ##\n"
 
-# Functions
-function komodod_run () {
-  while [[ $# -gt 0 ]]; do
-  	key="$1"
-  	case $key in
-      -pubkey)
-        export komodod_run_PUBKEY="-pubkey=${2}"
-        shift
-      ;;
-      -seq)
-        export komodod_run_SEQUENCE="${2}"
-        shift
-      ;;
-      -daemon)
-        export komodod_run_DAEMON="-daemon"
-      ;;
-      -gen)
-        export komodod_run_GEN="-gen"
-      ;;
-      *)
-        echo "WARNING: Unknown option $key" >&2
-        exit 1
-      ;;
-    esac
-    shift
-  done
+# Create files to stop, start and check status
+sed -e "s|<KOMODO_SRC_DIR>|${KOMODO_SRC_DIR}|g" \
+  -e "s|<AC_START>|${AC_START}|g" -e "s|<AC_END>|${AC_END}|g" \
+  $(dirname $0)/.komodo/bin/ac_start_all.sh > ${HOME}/.komodo/bin/ac_start_all.sh
 
-  if ! $(ps aux | grep -w "ac_name=TXSCL${komodod_run_SEQUENCE}" | grep -v grep >& /dev/null ); then
-    ${KOMODO_SRC_DIR}/src/komodod -ac_name=TXSCL${komodod_run_SEQUENCE} -ac_supply=100000000 -addnode=54.36.176.84 \
-      $komodod_run_DAEMON $komodod_run_GEN $komodod_run_PUBKEY
-  else
-    echo -e "ac_name=TXSCL${komodod_run_SEQUENCE} already running"
-  fi
-}
+sed -e "s|<KOMODO_SRC_DIR>|${KOMODO_SRC_DIR}|g" \
+  -e "s|<AC_START>|${AC_START}|g" -e "s|<AC_END>|${AC_END}|g" \
+  $(dirname $0)/.komodo/bin/ac_stop_all.sh > ${HOME}/.komodo/bin/ac_stop_all.sh
 
+sed -e "s|<KOMODO_SRC_DIR>|${KOMODO_SRC_DIR}|g" \
+  -e "s|<AC_START>|${AC_START}|g" -e "s|<AC_END>|${AC_END}|g" \
+  $(dirname $0)/.komodo/bin/ac_status_all.sh > ${HOME}/.komodo/bin/ac_status_all.sh
 
-if [[ -f ${KOMODO_SRC_DIR}/src/komodod ]]; then
-
-  # Run it for `TXSCL` first and then for the rest
-  #komodod_run -daemon
-
-  for (( i=${AC_START}; i<${AC_END}; i++ )); do
-    komodod_run -seq $i -daemon
-    # This will create ${HOME}/.komodo/TXSCL${i}/TXSCL${i}.conf
-
-    DAEMONCONF="${HOME}/.komodo/TXSCL${i}/TXSCL${i}.conf"
-    RPCUSER=$(grep 'rpcuser' $DAEMONCONF | cut -d'=' -f2)
-    RPCPASSWORD=$(grep 'rpcpassword' $DAEMONCONF | cut -d'=' -f2)
-    RPCPORT=$(grep 'rpcport' $DAEMONCONF | cut -d'=' -f2)
-
-  done
-fi
+# Permissions and ownership
+chmod +x ${HOME}/.komodo/bin/*
