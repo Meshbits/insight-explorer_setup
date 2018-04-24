@@ -19,7 +19,7 @@ apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold
   libgmp3-dev
 EOF
 
-if ! $DONT_BUILD; then
+if [[ ! $DONT_BUILD ]]; then
 
   #### Install nanomsg
   sudo chown `whoami`. /usr/local/src
@@ -89,6 +89,8 @@ function komodod_run () {
   if ! $(ps aux | grep -w "ac_name=TXSCL${komodod_run_SEQUENCE}" | grep -v grep >& /dev/null ); then
     ${KOMODO_SRC_DIR}/src/komodod -ac_name=TXSCL${komodod_run_SEQUENCE} -ac_supply=100000000 -addnode=54.36.176.84 \
       $komodod_run_DAEMON $komodod_run_GEN $komodod_run_PUBKEY
+  else
+    echo -e "ac_name=TXSCL${komodod_run_SEQUENCE} already running"
   fi
 }
 

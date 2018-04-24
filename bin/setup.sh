@@ -33,12 +33,6 @@ Setup and configure komodod, insight-explorer.
 HELP
     exit 0
     ;;
-    --dont-build)
-      export DONT_BUILD=false
-    ;;
-    -ev|--example-variable)
-      export EXAMPLE_VARIABLE=0
-    ;;
     --ac-start)
       export AC_START="$2"
       shift
@@ -50,6 +44,12 @@ HELP
     --username)
       export SCRIPTUSER="$2"
       shift
+    ;;
+    --dont-build)
+      export DONT_BUILD=false
+    ;;
+    -ev|--example-variable)
+      export EXAMPLE_VARIABLE=0
     ;;
     *)
     echo "WARNING: Unknown option $key" >&2
