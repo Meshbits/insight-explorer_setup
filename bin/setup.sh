@@ -26,9 +26,15 @@ Setup and configure komodod, insight-explorer.
 --ac-end                              Assetchain end counter; eg: 100
 --insight-repository                  Insight repository; defaults to
                                       https://github.com/KomodoPlatform/insight-ui-komodo for now
+
+# Don't use unless you know what you doing:
+--dont-build                          Allows the setup script to be run multiple times without rebuilding komodo
 -ev | --example-variable              Set an EXAMPLE_VARIABLE variable to be use with the script
 HELP
     exit 0
+    ;;
+    --dont-build)
+      export DONT_BUILD=false
     ;;
     -ev|--example-variable)
       export EXAMPLE_VARIABLE=0

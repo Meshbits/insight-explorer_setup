@@ -19,33 +19,37 @@ apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold
   libgmp3-dev
 EOF
 
-#### Install nanomsg
-sudo chown `whoami`. /usr/local/src
-cd /usr/local/src
-[[ -d nanomsg ]] || git clone https://github.com/nanomsg/nanomsg
-cd nanomsg
-cmake .
-time make
-time sudo make install
-time sudo ldconfig
+if ! $DONT_BUILD; then
 
-### Installing
-cd ${HOME}
-if [[ -d ${HOME}/komodo ]]; then
-  cd ${HOME}/komodo
-  git checkout ${KOMODO_BRANCH}; git reset --hard; git pull --rebase
-else
-  git clone ${KOMODO_REPOSITORY} -b ${KOMODO_BRANCH}
-  cd ${HOME}/komodo
+  #### Install nanomsg
+  sudo chown `whoami`. /usr/local/src
+  cd /usr/local/src
+  [[ -d nanomsg ]] || git clone https://github.com/nanomsg/nanomsg
+  cd nanomsg
+  cmake .
+  time make
+  time sudo make install
+  time sudo ldconfig
+
+  ### Installing
+  cd ${HOME}
+  if [[ -d ${HOME}/komodo ]]; then
+    cd ${HOME}/komodo
+    git checkout ${KOMODO_BRANCH}; git reset --hard; git pull --rebase
+  else
+    git clone ${KOMODO_REPOSITORY} -b ${KOMODO_BRANCH}
+    cd ${HOME}/komodo
+  fi
+
+  echo -e "===> Build Komodo Daemon"
+  [[ -d "${HOME}/.zcash-params" ]] || mkdir "${HOME}/.zcash-params"
+  time wget -c https://gitlab.com/zcashcommunity/params/raw/master/sprout-proving.key \
+    -O ${HOME}/.zcash-params/sprout-proving.key.dl
+  time ./zcutil/fetch-params.sh
+  time ./zcutil/build.sh -j${VAR_PROC}
+  echo -e "===> Finished building Komodo Daemon"
+
 fi
-
-echo -e "===> Build Komodo Daemon"
-[[ -d "${HOME}/.zcash-params" ]] || mkdir "${HOME}/.zcash-params"
-time wget -c https://gitlab.com/zcashcommunity/params/raw/master/sprout-proving.key \
-  -O ${HOME}/.zcash-params/sprout-proving.key.dl
-time ./zcutil/fetch-params.sh
-time ./zcutil/build.sh -j${VAR_PROC}
-echo -e "===> Finished building Komodo Daemon"
 
 # Symlink binaries
 sudo ln -sf ${HOME}/komodo/src/komodo-cli /usr/local/bin/
