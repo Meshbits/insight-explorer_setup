@@ -8,7 +8,8 @@ echo -e "## Komodod Daemon setup starting ##\n"
 source /etc/profile
 
 #### Install pre-requisites:
-export DEBIAN_FRONTEND=noninteractive
+sudo -s bash <<EOF
+export DEBIAN_FRONTEND=noninteractive;
 apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -qq \
   install build-essential pkg-config libc6-dev m4 g++-multilib \
   autoconf libtool ncurses-dev unzip git python zlib1g-dev wget bsdmainutils \
@@ -16,6 +17,7 @@ apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold
   libqt4-dev libqrencode-dev libdb++-dev ntp ntpdate vim \
   software-properties-common curl libcurl4-gnutls-dev cmake clang \
   libgmp3-dev
+EOF
 
 #### Install nanomsg
 sudo chown `whoami`. /usr/local/src
