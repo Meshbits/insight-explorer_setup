@@ -7,7 +7,7 @@
   - Enable swapfile - necessary for vps/cloud offerings
   - Create a user - default: meshbits
 - Setup requisite packages for komodo
-  - Install komodo in `/home/$USER/komodo`
+  - Install *komodo* in `/home/$USER/komodo`
 
 
 ## To run setup
