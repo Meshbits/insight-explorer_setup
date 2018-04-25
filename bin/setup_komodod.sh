@@ -6,6 +6,7 @@ echo -e "## Komodod Daemon setup starting ##\n"
 
 # source profile
 source /etc/profile
+[[ -f ${HOME}/.common/config ]] && source ${HOME}/.common/config
 
 #### Install pre-requisites:
 sudo -s bash <<EOF
@@ -64,18 +65,18 @@ echo -e "## Komodod Daemon has been configured ##\n"
 
 # Create files to stop, start and check status
 sed -e "s|<KOMODO_SRC_DIR>|${KOMODO_SRC_DIR}|g" \
-  -e "s|<AC_START>|${AC_START}|g" -e "s|<AC_END>|${AC_END}|g" \
+  -e "s|<AC_COINLIST>|${AC_COINLIST}|g" \
   $(dirname $0)/.komodo/bin/ac_start_all.sh > ${HOME}/.komodo/bin/ac_start_all.sh
 
 sed -e "s|<KOMODO_SRC_DIR>|${KOMODO_SRC_DIR}|g" \
-  -e "s|<AC_START>|${AC_START}|g" -e "s|<AC_END>|${AC_END}|g" \
+  -e "s|<AC_COINLIST>|${AC_COINLIST}|g" \
   $(dirname $0)/.komodo/bin/ac_stop_all.sh > ${HOME}/.komodo/bin/ac_stop_all.sh
 
 sed -e "s|<KOMODO_SRC_DIR>|${KOMODO_SRC_DIR}|g" \
-  -e "s|<AC_START>|${AC_START}|g" -e "s|<AC_END>|${AC_END}|g" \
+  -e "s|<AC_COINLIST>|${AC_COINLIST}|g" \
   $(dirname $0)/.komodo/bin/ac_status_all.sh > ${HOME}/.komodo/bin/ac_status_all.sh
 
-sed -e "s|<AC_START>|${AC_START}|g" -e "s|<AC_END>|${AC_END}|g" \
+sed -e "s|<AC_COINLIST>|${AC_COINLIST}|g" \
   $(dirname $0)/.komodo/bin/ac_purge_all.sh > ${HOME}/.komodo/bin/ac_purge_all.sh
 
 # Permissions and ownership
