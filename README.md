@@ -3,11 +3,11 @@
 ## What this will do
 
 - System optimisation
- - Stop unnecessary services
- - Enable swapfile - necessary for vps/cloud offerings
- - Create a user - default: meshbits
+  - Stop unnecessary services
+  - Enable swapfile - necessary for vps/cloud offerings
+  - Create a user - default: meshbits
 - Setup requisite packages for komodo
- - Install komodo in `/home/$USER/komodo`
+  - Install komodo in `/home/$USER/komodo`
 
 
 ## To run setup
@@ -28,3 +28,9 @@ git clone git@bitbucket.org:meshbits/insights-explorer_setup.git
 cd insights-explorer_setup
 ./bin/setup.sh
 ```
+
+## to-do
+
+- Setup insight-explore
+  - Use `bitcore_insight_explorer.tar.bz2` as the code
+  - Setup configuration based on `komodod/$ASSETCHAIN`
