@@ -24,7 +24,7 @@ function komodod_stop () {
 
   # stop the assetchain in 120 seconds or fail
   count=0
-  while [[ count -lt 120 ]]; do
+  while [[ count -lt 20 ]]; do
     if ! $(ps aux | grep -w "ac_name=TXSCL${komodod_run_SEQUENCE}" | grep -v grep) >& /dev/null; then
       if $($KOMODO_CLI -ac_name=TXSCL${komodod_run_SEQUENCE} getinfo >& /dev/null); then
         echo -e "## Stopping ac_name=TXSCL${komodod_run_SEQUENCE} ##"
@@ -47,4 +47,4 @@ for (( i=<AC_START>; i<=<AC_END>; i++ )); do
 done
 
 # Wait for all parallel jobs to finish
-while [ 1 ]; do fg 2> /dev/null; [ $? == 1 ] && break; done
+while [ 1 ]; do fg >& /dev/null; [ $? == 1 ] && break; done
