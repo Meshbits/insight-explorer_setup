@@ -54,9 +54,11 @@ for (( i=<AC_START>; i<=<AC_END>; i++ )); do
   # This will create ${HOME}/.komodo/TXSCL${i}/TXSCL${i}.conf
 
   DAEMONCONF="${HOME}/.komodo/TXSCL${mod_i}/TXSCL${mod_i}.conf"
-  RPCUSER=$(grep 'rpcuser' $DAEMONCONF | cut -d'=' -f2)
-  RPCPASSWORD=$(grep 'rpcpassword' $DAEMONCONF | cut -d'=' -f2)
-  RPCPORT=$(grep 'rpcport' $DAEMONCONF | cut -d'=' -f2)
+  if [[ -f $DAEMONCONF ]]; then
+    RPCUSER=$(grep 'rpcuser' $DAEMONCONF | cut -d'=' -f2)
+    RPCPASSWORD=$(grep 'rpcpassword' $DAEMONCONF | cut -d'=' -f2)
+    RPCPORT=$(grep 'rpcport' $DAEMONCONF | cut -d'=' -f2)
+  fi
 done
 
 # Wait for all parallel jobs to finish
