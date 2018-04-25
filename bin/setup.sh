@@ -74,6 +74,8 @@ export VAR_PROC=$(cat /proc/cpuinfo | grep processor | wc -l)
 #==================================================#
 # These are probably going to not be needed on a physical hardware #
 
+echo "==> Starting the setup <=="
+
 # Disable unnecessary services
 for list in iscsid lvm2-lvmetad mdadm
 do
@@ -103,7 +105,6 @@ echo "${SCRIPTUSER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${SCRIPTUSER}
 chmod 0400 /etc/sudoers.d/${SCRIPTUSER}
 
 #To disable the above systemd service/timer else it can cause conflict with the following apt-get commands:
-echo "==> Disabling the release upgrader"
 sed -i.bak 's/^Prompt=.*$/Prompt=never/' /etc/update-manager/release-upgrades
 
 for item in 'apt-daily.service' 'apt-daily.timer'; do
