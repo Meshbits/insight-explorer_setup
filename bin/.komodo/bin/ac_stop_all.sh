@@ -7,12 +7,12 @@ set -m
 
 # start jobs in parallel
 for (( i=<AC_START>; i<=<AC_END>; i++ )); do
-
+  mod_i=$(printf "%03d " $i)
   count=0
   while [[ count -lt 120 ]]; do
-    if $($KOMODO_CLI -ac_name=TXSCL$i getinfo >& /dev/null); then
-      echo -e "## Stopping ac_name=TXSCL$i ##"
-      $KOMODO_CLI -ac_name=TXSCL$i stop
+    if $($KOMODO_CLI -ac_name=TXSCL${mod_i} getinfo >& /dev/null); then
+      echo -e "## Stopping ac_name=TXSCL${mod_i} ##"
+      $KOMODO_CLI -ac_name=TXSCL${mod_i} stop
       break
     fi
     count=${count}+1

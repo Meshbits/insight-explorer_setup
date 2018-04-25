@@ -49,10 +49,11 @@ komodod_run -daemon
 
 # start jobs in parallel
 for (( i=<AC_START>; i<=<AC_END>; i++ )); do
-  komodod_run -seq $i -daemon &
+  mod_i=$(printf "%03d " $i)
+  komodod_run -seq $mod_i -daemon &
   # This will create ${HOME}/.komodo/TXSCL${i}/TXSCL${i}.conf
 
-  DAEMONCONF="${HOME}/.komodo/TXSCL${i}/TXSCL${i}.conf"
+  DAEMONCONF="${HOME}/.komodo/TXSCL${mod_i}/TXSCL${mod_i}.conf"
   RPCUSER=$(grep 'rpcuser' $DAEMONCONF | cut -d'=' -f2)
   RPCPASSWORD=$(grep 'rpcpassword' $DAEMONCONF | cut -d'=' -f2)
   RPCPORT=$(grep 'rpcport' $DAEMONCONF | cut -d'=' -f2)
