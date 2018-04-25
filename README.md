@@ -23,6 +23,13 @@ cd insights-explorer_setup
 ./bin/setup.sh
 ```
 
+### To start assetchains
+
+```
+su - meshbits
+~/.komodo/bin/ac_start_all.sh
+```
+
 ## To run test
 
 This can be helpful when komodo and requisites have already been compiled and
