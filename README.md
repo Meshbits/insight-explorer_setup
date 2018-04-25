@@ -1,4 +1,4 @@
-# Insight explorer setup
+# insight-explorer setup
 
 ## Important
 
@@ -32,13 +32,14 @@ su - meshbits
 
 ## To run test
 
+
 This can be helpful when komodo and requisites have already been compiled and
 you only want to test the configuration changes
 
 ```
 git clone git@github.com:Meshbits/insight-explorer_setup.git
 cd insights-explorer_setup
-./bin/setup.sh
+./test/run.sh
 ```
 
 ## to-do
