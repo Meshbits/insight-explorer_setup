@@ -18,7 +18,7 @@
 ## To run setup
 
 ```
-git clone git@github.com:Meshbits/insight-explorer_setup.git
+git clone https://github.com/Meshbits/insight-explorer_setup.git
 cd insights-explorer_setup
 ./bin/setup.sh
 ```
@@ -37,7 +37,7 @@ This can be helpful when komodo and requisites have already been compiled and
 you only want to test the configuration changes
 
 ```
-git clone git@github.com:Meshbits/insight-explorer_setup.git
+git clone https://github.com/Meshbits/insight-explorer_setup.git
 cd insights-explorer_setup
 ./test/run.sh
 ```
