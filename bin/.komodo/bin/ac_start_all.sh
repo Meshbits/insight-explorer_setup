@@ -17,7 +17,7 @@ function komodod_run () {
         shift
       ;;
       -coinname)
-        SEQUENCE="${2}"
+        COINNAME="${2}"
         shift
       ;;
       -supply)
@@ -38,11 +38,11 @@ function komodod_run () {
     shift
   done
 
-  if ! $(ps aux | grep -w "ac_name=${SEQUENCE}" | grep -v grep >& /dev/null); then
-    <KOMODO_SRC_DIR>/src/komodod -ac_name="${SEQUENCE}" -ac_supply="${SUPPLY}" \
+  if ! $(ps aux | grep -w "ac_name=${COINNAME}" | grep -v grep >& /dev/null); then
+    <KOMODO_SRC_DIR>/src/komodod -ac_name="${COINNAME}" -ac_supply="${SUPPLY}" \
       -addnode=54.36.176.84 $DAEMON $GEN $PUBKEY
   else
-    echo -e "ac_name=${SEQUENCE} already running"
+    echo -e "ac_name=${COINNAME} already running"
   fi
 }
 
