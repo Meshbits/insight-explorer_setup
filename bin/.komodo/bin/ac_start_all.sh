@@ -45,13 +45,14 @@ if [[ ! -f <KOMODO_SRC_DIR>/src/komodod ]]; then
 fi
 
 # Run it for `TXSCL` first and then the rest
-komodod_run -daemon
+komodod_run -daemon &
 
 # start jobs in parallel
 for (( i=<AC_START>; i<=<AC_END>; i++ )); do
   mod_i=$(printf "%03d " $i)
-  komodod_run -seq $mod_i -daemon &
+
   # This will create ${HOME}/.komodo/TXSCL${i}/TXSCL${i}.conf
+  komodod_run -seq $mod_i -daemon &
 
   DAEMONCONF="${HOME}/.komodo/TXSCL${mod_i}/TXSCL${mod_i}.conf"
   if [[ -f $DAEMONCONF ]]; then
