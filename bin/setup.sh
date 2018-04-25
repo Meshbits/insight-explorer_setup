@@ -129,9 +129,6 @@ apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold
 
 
 userdatasetup_log="/home/${SCRIPTUSER}/userdatasetup_log"
-
-if ${AC_COINLIST}; then
-  sudo -H -E -u ${SCRIPTUSER} bash ${SCRIPTPATH}/common_config.sh 2>&1 | tee -a ${userdatasetup_log}
-fi
-
+# Run other scripts
+sudo -H -E -u ${SCRIPTUSER} bash ${SCRIPTPATH}/common_config.sh 2>&1 | tee -a ${userdatasetup_log}
 sudo -H -E -u ${SCRIPTUSER} bash ${SCRIPTPATH}/setup_komodod.sh 2>&1 | tee -a ${userdatasetup_log}
