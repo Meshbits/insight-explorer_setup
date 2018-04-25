@@ -9,18 +9,18 @@ function komodod_run () {
   	key="$1"
   	case $key in
       -pubkey)
-        export komodod_run_PUBKEY="-pubkey=${2}"
+        PUBKEY="-pubkey=${2}"
         shift
       ;;
       -seq)
-        export komodod_run_SEQUENCE="${2}"
+        SEQUENCE="${2}"
         shift
       ;;
       -daemon)
-        export komodod_run_DAEMON="-daemon"
+        DAEMON="-daemon"
       ;;
       -gen)
-        export komodod_run_GEN="-gen"
+        GEN="-gen"
       ;;
       *)
         echo "WARNING: Unknown option $key" >&2
@@ -30,11 +30,11 @@ function komodod_run () {
     shift
   done
 
-  if ! $(ps aux | grep -w "ac_name=TXSCL${komodod_run_SEQUENCE}" | grep -v grep) >& /dev/null; then
-    <KOMODO_SRC_DIR>/src/komodod -ac_name=TXSCL${komodod_run_SEQUENCE} -ac_supply=100000000 -addnode=54.36.176.84 \
-      $komodod_run_DAEMON $komodod_run_GEN $komodod_run_PUBKEY
+  if ! $(ps aux | grep -w "ac_name=TXSCL${SEQUENCE}" | grep -v grep) >& /dev/null; then
+    <KOMODO_SRC_DIR>/src/komodod -ac_name=TXSCL${SEQUENCE} -ac_supply=100000000 -addnode=54.36.176.84 \
+      $DAEMON $GEN $PUBKEY
   else
-    echo -e "ac_name=TXSCL${komodod_run_SEQUENCE} already running"
+    echo -e "ac_name=TXSCL${SEQUENCE} already running"
   fi
 }
 
@@ -63,4 +63,4 @@ for (( i=<AC_START>; i<=<AC_END>; i++ )); do
 done
 
 # Wait for all parallel jobs to finish
-while [ 1 ]; do fg 2> /dev/null; [ $? == 1 ] && break; done
+while [ 1 ]; do fg >& /dev/null; [ $? == 1 ] && break; done
