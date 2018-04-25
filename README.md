@@ -19,7 +19,7 @@
 
 ```
 git clone https://github.com/Meshbits/insight-explorer_setup.git
-cd insights-explorer_setup
+cd insight-explorer_setup
 ./bin/setup.sh
 ```
 
@@ -38,7 +38,7 @@ you only want to test the configuration changes
 
 ```
 git clone https://github.com/Meshbits/insight-explorer_setup.git
-cd insights-explorer_setup
+cd insight-explorer_setup
 ./test/run.sh
 ```
 
