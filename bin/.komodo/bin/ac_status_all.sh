@@ -27,7 +27,7 @@ function komodod_status () {
   while [[ count -lt 120 ]]; do
     if ! $(ps aux | grep -w "ac_name=TXSCL${SEQUENCE}" | grep -v grep) >& /dev/null; then
       if $($KOMODO_CLI -ac_name=TXSCL${SEQUENCE} getinfo >& /dev/null); then
-        getinfo=$($KOMODO_CLI -ac_name=TXSCL${SEQUENCE} getinfo)
+        getinfo=$($KOMODO_CLI -ac_name=TXSCL${SEQUENCE} getinfo 2> /dev/null)
         if [[ $(echo $getinfo | jq -r .longestchain) -eq $(echo $getinfo | jq -r .blocks) ]]; then
           echo -e "## ac_name=TXSCL${SEQUENCE} in sync with the network ##"
           break
