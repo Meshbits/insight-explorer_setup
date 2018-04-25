@@ -77,8 +77,8 @@ export VAR_PROC=$(cat /proc/cpuinfo | grep processor | wc -l)
 # Disable unnecessary services
 for list in iscsid lvm2-lvmetad mdadm
 do
-  systemctl stop ${list}
-  systemctl disable ${list}
+  systemctl stop ${list} >& /dev/null
+  systemctl disable ${list} >& /dev/null
 done
 
 # Create a swapfile for Cloud Instances
