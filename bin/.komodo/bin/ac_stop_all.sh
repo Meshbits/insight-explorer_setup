@@ -22,15 +22,19 @@ function komodod_stop () {
     shift
   done
 
-  # stop the assetchain in 120 seconds or fail
+  # stop the assetchain in 10 seconds or fail
   count=0
-  while [[ count -lt 20 ]]; do
+  while [[ count -lt 10 ]]; do
     if ! $(ps aux | grep -w "ac_name=TXSCL${komodod_run_SEQUENCE}" | grep -v grep) >& /dev/null; then
       if $($KOMODO_CLI -ac_name=TXSCL${komodod_run_SEQUENCE} getinfo >& /dev/null); then
         echo -e "## Stopping ac_name=TXSCL${komodod_run_SEQUENCE} ##"
         $KOMODO_CLI -ac_name=TXSCL${komodod_run_SEQUENCE} stop
         break
       fi
+    fi
+    # Try kill if count is close to 9
+    if [[ $count -eq 8 ]]; then
+      kill -15 $(ps aux | grep -w "ac_name=TXSCL${komodod_run_SEQUENCE}" | grep -v grep | awk '{ print $2 }') >& /dev/null
     fi
     count=${count}+1
     sleep 1
