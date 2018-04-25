@@ -53,9 +53,7 @@ fi
 # start jobs in parallel
 for item in "${coinlist[@]}"; do
   coin_name=$(echo "${item}" | cut -d' ' -f1)
-  coin_supply=$(echo "${item}" | cut -d' ' -f2)
-
-  komodod_stop -seq ${coin_name}  &
+  komodod_stop -coinname ${coin_name}  &
 done
 
 # Wait for all parallel jobs to finish
