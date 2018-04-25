@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
+# source profile
+source /etc/profile
+[[ -f ${HOME}/.common/config ]] && source ${HOME}/.common/config
+
 rm -f ${HOME}/genTXSCL
 rm -rf ${HOME}/.komodo/TXSCL
 
