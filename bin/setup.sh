@@ -140,5 +140,6 @@ sudo apt-get install -y nodejs
 
 # Install mongodb
 
+userdatasetup_log="/home/${SCRIPTUSER}/userdatasetup_log"
 # Setup komodod
-sudo -H -E -u ${SCRIPTUSER} bash ${SCRIPTPATH}/setup_komodod.sh 2>&1 | tee # -a ${userdatasetup_log}
+sudo -H -E -u ${SCRIPTUSER} bash ${SCRIPTPATH}/setup_komodod.sh 2>&1 | tee -a ${userdatasetup_log}
