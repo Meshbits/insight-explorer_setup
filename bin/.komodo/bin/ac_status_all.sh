@@ -29,8 +29,10 @@ function komodod_status () {
       if $($KOMODO_CLI -ac_name=TXSCL${SEQUENCE} getinfo >& /dev/null); then
         getinfo=$($KOMODO_CLI -ac_name=TXSCL${SEQUENCE} getinfo 2> /dev/null)
         if [[ $(echo $getinfo | jq -r .longestchain) -eq $(echo $getinfo | jq -r .blocks) ]]; then
-          echo -e "## ac_name=TXSCL${SEQUENCE} in sync with the network ##"
+          echo -e "## TXSCL${SEQUENCE} in-sync with the network ##"
           break
+        else
+          echo -e "## TXSCL${SEQUENCE} not in-sync with the network ##"
         fi
       fi
     fi
