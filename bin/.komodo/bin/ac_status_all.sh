@@ -22,4 +22,4 @@ for (( i=<AC_START>; i<=<AC_END>; i++ )); do
 done
 
 # Wait for all parallel jobs to finish
-while [ 1 ]; do fg 2> /dev/null; [ $? == 1 ] && break; done
+while [ 1 ]; do fg >& /dev/null; [ $? == 1 ] && break; done
