@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
+# source profile
+source /etc/profile
+[[ -f ${HOME}/.common/config ]] && source ${HOME}/.common/config
+
 # Enable Job Control
 set -m
 
@@ -12,8 +16,12 @@ function komodod_run () {
         PUBKEY="-pubkey=${2}"
         shift
       ;;
-      -seq)
+      -coinname)
         SEQUENCE="${2}"
+        shift
+      ;;
+      -supply)
+        SUPPLY="${2}"
         shift
       ;;
       -daemon)
@@ -30,11 +38,11 @@ function komodod_run () {
     shift
   done
 
-  if ! $(ps aux | grep -w "ac_name=TXSCL${SEQUENCE}" | grep -v grep >& /dev/null); then
-    <KOMODO_SRC_DIR>/src/komodod -ac_name=TXSCL${SEQUENCE} -ac_supply=100000000 -addnode=54.36.176.84 \
-      $DAEMON $GEN $PUBKEY
+  if ! $(ps aux | grep -w "ac_name=${SEQUENCE}" | grep -v grep >& /dev/null); then
+    <KOMODO_SRC_DIR>/src/komodod -ac_name="${SEQUENCE}" -ac_supply="${SUPPLY}" \
+      -addnode=54.36.176.84 $DAEMON $GEN $PUBKEY
   else
-    echo -e "ac_name=TXSCL${SEQUENCE} already running"
+    echo -e "ac_name=${SEQUENCE} already running"
   fi
 }
 
@@ -44,21 +52,26 @@ if [[ ! -f <KOMODO_SRC_DIR>/src/komodod ]]; then
   exit 1
 fi
 
-# Run it for `TXSCL` first and then the rest
-komodod_run -daemon &
+# Get the coinlist; store name and value in variables
+if [[ -f ${HOME}/.common/coinlist ]]; then
+  source ${HOME}/.common/coinlist
+else
+  echo -e "Coinlist not found. Exiting.."
+  exit 1
+fi
 
 # start jobs in parallel
-for (( i=<AC_START>; i<=<AC_END>; i++ )); do
-  mod_i=$(printf "%03d " $i)
+for item in "${coinlist[@]}"; do
+  coin_name=$(echo "${item}" | cut -d' ' -f1)
+  coin_supply=$(echo "${item}" | cut -d' ' -f2)
 
-  # This will create ${HOME}/.komodo/TXSCL${i}/TXSCL${i}.conf
-  komodod_run -seq $mod_i -daemon &
+  komodod_run -coinname ${coin_name} -supply ${coin_supply} -daemon &
 
-  DAEMONCONF="${HOME}/.komodo/TXSCL${mod_i}/TXSCL${mod_i}.conf"
-  if [[ -f $DAEMONCONF ]]; then
-    RPCUSER=$(grep 'rpcuser' $DAEMONCONF | cut -d'=' -f2)
-    RPCPASSWORD=$(grep 'rpcpassword' $DAEMONCONF | cut -d'=' -f2)
-    RPCPORT=$(grep 'rpcport' $DAEMONCONF | cut -d'=' -f2)
+  DAEMONCONF="${HOME}/.komodo/${coin_name}/${coin_name}.conf"
+  if [[ -f ${DAEMONCONF} ]]; then
+    RPCUSER=$(grep 'rpcuser' ${DAEMONCONF} | cut -d'=' -f2)
+    RPCPASSWORD=$(grep 'rpcpassword' ${DAEMONCONF} | cut -d'=' -f2)
+    RPCPORT=$(grep 'rpcport' ${DAEMONCONF} | cut -d'=' -f2)
   fi
 done
 
