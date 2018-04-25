@@ -8,7 +8,7 @@ set -e
 [[ -z ${KOMODO_CONF_DIR+x} ]] && export KOMODO_CONF_DIR="/home/${SCRIPTUSER}/.komodo"
 [[ -z ${KOMODO_REPOSITORY+x} ]] && export KOMODO_REPOSITORY='https://github.com/jl777/komodo.git'
 [[ -z ${KOMODO_BRANCH+x} ]] && export KOMODO_BRANCH=jl777
-[[ -z ${AC_COINLIST+x} ]] && export AC_COINLIST="$(dirname $0)../conf/coinlist"
+[[ -z ${AC_COINLIST+x} ]] && export AC_COINLIST="$(dirname $0)/../conf/coinlist"
 
 # More variables
 COMMON_ROOT="${HOME}/.common"
