@@ -18,12 +18,14 @@ Usage: userdata.sh [OPTIONS]
 Setup and configure komodod, insight-explorer.
 - ${HOME}/komodo/src/komodo/komodod
 - ${HOME}/komodo/src/komodo/komodo-cli
-- ${HOME}/.komodo/${AC}/$AC.conf - eg: [ ${HOME}/.komodo/TXSCL/$TXSCL.conf ]
+- ${HOME}/.komodo/${AC}/${AC}.conf - eg: [ ${HOME}/.komodo/TXSCL/TXSCL.conf ]
+
+Note:
+For now, we assume that you have a `/home/bitcore_insight_explorer.tar.bz2` archive
 
 -h | --help                           Show this help
 --username                            Username to run daemons
---ac-start                            Assetchain start counter; eg: 001
---ac-end                              Assetchain end counter; eg: 100
+--ac-coinlist                         Assetchain coinlist containing coin NAME and SUPPLY
 --insight-repository                  Insight repository; defaults to
                                       https://github.com/KomodoPlatform/insight-ui-komodo for now
 
@@ -33,16 +35,12 @@ Setup and configure komodod, insight-explorer.
 HELP
     exit 0
     ;;
-    --ac-start)
-      export AC_START="$2"
-      shift
-    ;;
-    --ac-end)
-      export AC_END="$2"
-      shift
-    ;;
     --username)
       export SCRIPTUSER="$2"
+      shift
+    ;;
+    --ac-coinlist)
+      export AC_COINLIST="$2"
       shift
     ;;
     --dont-build)
@@ -52,7 +50,7 @@ HELP
       export EXAMPLE_VARIABLE=0
     ;;
     *)
-    echo "WARNING: Unknown option $key" >&2
+    echo "WARNING: Unknown option ${key}" >&2
     exit 1
     ;;
   esac
@@ -61,15 +59,9 @@ done
 
 # Variables
 export SCRIPTNAME=$(realpath $0)
-export SCRIPTPATH=$(dirname $SCRIPTNAME)
-
-export KOMODO_CONF_DIR="/home/${SCRIPTUSER}/.komodo"
-export VAR_PROC=$(cat /proc/cpuinfo | grep processor | wc -l)
+export SCRIPTPATH=$(dirname ${SCRIPTNAME})
 
 [[ -z ${SCRIPTUSER+x} ]] && export SCRIPTUSER=meshbits
-[[ -z ${KOMODO_SRC_DIR+x} ]] && export KOMODO_SRC_DIR="/home/${SCRIPTUSER}/komodo"
-[[ -z ${KOMODO_REPOSITORY+x} ]] && export KOMODO_REPOSITORY='https://github.com/jl777/komodo.git'
-[[ -z ${KOMODO_BRANCH+x} ]] && export KOMODO_BRANCH=jl777
 
 #==================================================#
 # These are probably going to not be needed on a physical hardware #
@@ -108,8 +100,8 @@ chmod 0400 /etc/sudoers.d/${SCRIPTUSER}
 sed -i.bak 's/^Prompt=.*$/Prompt=never/' /etc/update-manager/release-upgrades
 
 for item in 'apt-daily.service' 'apt-daily.timer'; do
-  systemctl stop $item
-  systemctl disable $item
+  systemctl stop ${item} >& /dev/null
+  systemctl disable ${item} >& /dev/null
 done
 
 # wait until `apt-get updated` has been killed
@@ -137,5 +129,9 @@ apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold
 
 
 userdatasetup_log="/home/${SCRIPTUSER}/userdatasetup_log"
-# Setup komodod
+
+if ${AC_COINLIST}; then
+  sudo -H -E -u ${SCRIPTUSER} bash ${SCRIPTPATH}/common_config.sh 2>&1 | tee -a ${userdatasetup_log}
+fi
+
 sudo -H -E -u ${SCRIPTUSER} bash ${SCRIPTPATH}/setup_komodod.sh 2>&1 | tee -a ${userdatasetup_log}
