@@ -132,7 +132,7 @@ apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold
   upgrade
 apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -qq \
   install \
-  git sudo jq dnsutils wget tree inotify-tools
+  git sudo jq dnsutils wget tree inotify-tools htop
 
 # Install nodejs
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -

@@ -8,8 +8,8 @@ for (( i=<AC_START>; i<=<AC_END>; i++ )); do
 
   count=0
   while [[ count -lt 120 ]]; do
-    if $($KOMODO_CLI -ac_name=$i getinfo >& /dev/null); then
-      getinfo=$($KOMODO_CLI -ac_name=$i getinfo)
+    if $($KOMODO_CLI -ac_name=TXSCL$i getinfo >& /dev/null); then
+      getinfo=$($KOMODO_CLI -ac_name=TXSCL$i getinfo)
       if [[ $(echo $getinfo | jq -r .longestchain) -eq $(echo $getinfo | jq -r .blocks) ]]; then
         echo -e "## ac_name=TXSCL$i in sync with the network ##"
         break
