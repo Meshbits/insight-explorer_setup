@@ -32,6 +32,7 @@ function komodod_status () {
           echo -e "## ac_name=TXSCL${SEQUENCE} in sync with the network ##"
           break
         fi
+      fi
     fi
     count=${count}+1
     sleep 1
