@@ -30,7 +30,7 @@ function komodod_run () {
     shift
   done
 
-  if ! $(ps aux | grep -w "ac_name=TXSCL${SEQUENCE}" | grep -v grep) >& /dev/null; then
+  if ! $(ps aux | grep -w "ac_name=TXSCL${SEQUENCE}" | grep -v grep >& /dev/null); then
     <KOMODO_SRC_DIR>/src/komodod -ac_name=TXSCL${SEQUENCE} -ac_supply=100000000 -addnode=54.36.176.84 \
       $DAEMON $GEN $PUBKEY
   else
