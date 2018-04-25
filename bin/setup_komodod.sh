@@ -75,5 +75,8 @@ sed -e "s|<KOMODO_SRC_DIR>|${KOMODO_SRC_DIR}|g" \
   -e "s|<AC_START>|${AC_START}|g" -e "s|<AC_END>|${AC_END}|g" \
   $(dirname $0)/.komodo/bin/ac_status_all.sh > ${HOME}/.komodo/bin/ac_status_all.sh
 
+sed -e "s|<AC_START>|${AC_START}|g" -e "s|<AC_END>|${AC_END}|g" \
+  $(dirname $0)/.komodo/bin/ac_purge_all.sh > ${HOME}/.komodo/bin/ac_purge_all.sh
+
 # Permissions and ownership
 chmod +x ${HOME}/.komodo/bin/*
