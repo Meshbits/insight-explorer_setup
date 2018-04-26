@@ -5,7 +5,7 @@ set -e -m
 source /etc/profile
 [[ -f ${HOME}/.common/config ]] && source ${HOME}/.common/config
 
-KOMODO_CLI="<KOMODO_SRC_DIR>/src/komodo-cli"
+KOMODO_CLI="${KOMODO_SRC_DIR}/src/komodo-cli"
 
 function komodod_status () {
   while [[ $# -gt 0 ]]; do
@@ -29,7 +29,7 @@ function komodod_status () {
     if ! $(ps aux | grep -w "ac_name=${COINNAME}" | grep -v grep >& /dev/null); then
       if $($KOMODO_CLI -ac_name=${COINNAME} getinfo >& /dev/null); then
         getinfo=$($KOMODO_CLI -ac_name=${COINNAME} getinfo 2> /dev/null)
-        if [[ $(echo $getinfo | jq -r .longestchain) -eq $(echo $getinfo | jq -r .blocks) ]]; then
+        if [[ $(echo ${getinfo} | jq -r .longestchain) -eq $(echo ${getinfo} | jq -r .blocks) ]]; then
           echo -e "## ${COINNAME} in-sync with the network ##"
           break
         else

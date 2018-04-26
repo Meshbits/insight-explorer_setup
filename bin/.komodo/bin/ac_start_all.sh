@@ -39,7 +39,7 @@ function komodod_run () {
   done
 
   if ! $(ps aux | grep -w "ac_name=${COINNAME}" | grep -v grep >& /dev/null); then
-    <KOMODO_SRC_DIR>/src/komodod -ac_name="${COINNAME}" -ac_supply="${SUPPLY}" \
+    ${KOMODO_SRC_DIR}/src/komodod -ac_name="${COINNAME}" -ac_supply="${SUPPLY}" \
       -addnode=54.36.176.84 $DAEMON $GEN $PUBKEY
   else
     echo -e "ac_name=${COINNAME} already running"
@@ -47,7 +47,7 @@ function komodod_run () {
 }
 
 # Check if komodod was created and then run
-if [[ ! -f <KOMODO_SRC_DIR>/src/komodod ]]; then
+if [[ ! -f ${KOMODO_SRC_DIR}/src/komodod ]]; then
   echo -e "Couldn't find komodod binary. Exiting.."
   exit 1
 fi

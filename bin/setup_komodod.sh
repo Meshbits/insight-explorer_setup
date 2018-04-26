@@ -64,20 +64,10 @@ sudo chmod +x /usr/local/bin/komodod
 echo -e "## Komodod Daemon has been configured ##\n"
 
 # Create files to stop, start and check status
-sed -e "s|<KOMODO_SRC_DIR>|${KOMODO_SRC_DIR}|g" \
-  -e "s|<AC_COINLIST>|${AC_COINLIST}|g" \
-  $(dirname $0)/.komodo/bin/ac_start_all.sh > ${HOME}/.komodo/bin/ac_start_all.sh
-
-sed -e "s|<KOMODO_SRC_DIR>|${KOMODO_SRC_DIR}|g" \
-  -e "s|<AC_COINLIST>|${AC_COINLIST}|g" \
-  $(dirname $0)/.komodo/bin/ac_stop_all.sh > ${HOME}/.komodo/bin/ac_stop_all.sh
-
-sed -e "s|<KOMODO_SRC_DIR>|${KOMODO_SRC_DIR}|g" \
-  -e "s|<AC_COINLIST>|${AC_COINLIST}|g" \
-  $(dirname $0)/.komodo/bin/ac_status_all.sh > ${HOME}/.komodo/bin/ac_status_all.sh
-
-sed -e "s|<AC_COINLIST>|${AC_COINLIST}|g" \
-  $(dirname $0)/.komodo/bin/ac_purge_all.sh > ${HOME}/.komodo/bin/ac_purge_all.sh
+cp -f $(dirname $0)/.komodo/bin/ac_start_all.sh ${HOME}/.komodo/bin/
+cp -f $(dirname $0)/.komodo/bin/ac_stop_all.sh ${HOME}/.komodo/bin/
+cp -f $(dirname $0)/.komodo/bin/ac_status_all.sh ${HOME}/.komodo/bin/
+cp -f $(dirname $0)/.komodo/bin/careful_ac_purge_all.sh ${HOME}/.komodo/bin/
 
 # Permissions and ownership
 chmod +x ${HOME}/.komodo/bin/*

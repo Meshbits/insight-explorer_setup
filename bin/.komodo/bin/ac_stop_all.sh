@@ -5,7 +5,7 @@ set -e -m
 source /etc/profile
 [[ -f ${HOME}/.common/config ]] && source ${HOME}/.common/config
 
-KOMODO_CLI="<KOMODO_SRC_DIR>/src/komodo-cli"
+KOMODO_CLI="${KOMODO_SRC_DIR}/src/komodo-cli"
 
 function komodod_stop () {
   while [[ $# -gt 0 ]]; do
