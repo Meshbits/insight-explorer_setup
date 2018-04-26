@@ -1,17 +1,18 @@
 #!/usr/bin/env bash
-set -e
+set -e -m
 
-# Enable Job Control
-set -m
+# source profile
+source /etc/profile
+[[ -f ${HOME}/.common/config ]] && source ${HOME}/.common/config
 
-export KOMODO_CLI="<KOMODO_SRC_DIR>/src/komodo-cli"
+KOMODO_CLI="<KOMODO_SRC_DIR>/src/komodo-cli"
 
 function komodod_status () {
   while [[ $# -gt 0 ]]; do
     key="$1"
     case $key in
-      -seq)
-        SEQUENCE="${2}"
+      -coinname)
+        COINNAME="${2}"
         shift
       ;;
       *)
@@ -25,14 +26,14 @@ function komodod_status () {
   # stop the assetchain in 10 seconds or fail
   count=0
   while [[ count -lt 120 ]]; do
-    if ! $(ps aux | grep -w "ac_name=TXSCL${SEQUENCE}" | grep -v grep) >& /dev/null; then
-      if $($KOMODO_CLI -ac_name=TXSCL${SEQUENCE} getinfo >& /dev/null); then
-        getinfo=$($KOMODO_CLI -ac_name=TXSCL${SEQUENCE} getinfo 2> /dev/null)
+    if ! $(ps aux | grep -w "ac_name=${COINNAME}" | grep -v grep >& /dev/null); then
+      if $($KOMODO_CLI -ac_name=${COINNAME} getinfo >& /dev/null); then
+        getinfo=$($KOMODO_CLI -ac_name=${COINNAME} getinfo 2> /dev/null)
         if [[ $(echo $getinfo | jq -r .longestchain) -eq $(echo $getinfo | jq -r .blocks) ]]; then
-          echo -e "## TXSCL${SEQUENCE} in-sync with the network ##"
+          echo -e "## ${COINNAME} in-sync with the network ##"
           break
         else
-          echo -e "## TXSCL${SEQUENCE} not in-sync with the network ##"
+          echo -e "## ${COINNAME} not in-sync with the network ##"
         fi
       fi
     fi
@@ -41,13 +42,18 @@ function komodod_status () {
   done
 }
 
-komodod_status &
+# Get the coinlist; store name and value in variables
+if [[ -f ${HOME}/.common/coinlist ]]; then
+  source ${HOME}/.common/coinlist
+else
+  echo -e "Coinlist not found. Exiting.."
+  exit 1
+fi
 
 # start jobs in parallel
-for (( i=<AC_START>; i<=<AC_END>; i++ )); do
-  mod_i=$(printf "%03d " $i)
-
-  komodod_status -seq $mod_i  &
+for item in "${coinlist[@]}"; do
+  coin_name=$(echo "${item}" | cut -d' ' -f1)
+  komodod_status -coinname ${coin_name}  &
 done
 
 # Wait for all parallel jobs to finish
