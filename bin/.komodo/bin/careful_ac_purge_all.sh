@@ -1,6 +1,22 @@
 #!/usr/bin/env bash
 set -e
 
+while [[ $# -gt 0 ]]; do
+  key="$1"
+  case $key in
+    *)
+    cat >&2 <<HELP
+Usage: \${HOME}/.komodo/bin/$(basename $0)
+Purge all assetchains list in *coinlist*
+
+-h | --help                           Show this help
+HELP
+      exit 0
+    ;;
+  esac
+  shift
+done
+
 read -p "## Warning: You are about to purge all your assetchains listed in coinlist file. \
 \nPlease enter [y]es or [y] \n ##" userinput
 
@@ -26,11 +42,14 @@ else
   exit 1
 fi
 
+# Stop all assetchains
+${dirname $0}/ac_stop_all.sh
+
 # start jobs in parallel
 for item in "${coinlist[@]}"; do
   coin_name=$(echo "${item}" | cut -d' ' -f1)
 
-  rm -f ${HOME}/${coin_name}
+  rm -f ${HOME}/gen${coin_name}
   rm -rf ${HOME}/.komodo/${coin_name}
 done
 

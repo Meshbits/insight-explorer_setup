@@ -1,6 +1,22 @@
 #!/usr/bin/env bash
 set -e -m
 
+while [[ $# -gt 0 ]]; do
+  key="$1"
+  case $key in
+    *)
+    cat >&2 <<HELP
+Usage: \${HOME}/.komodo/bin/$(basename $0)
+Display status of all assetchains list in *coinlist*
+
+-h | --help                           Show this help
+HELP
+      exit 0
+    ;;
+  esac
+  shift
+done
+
 # source profile
 source /etc/profile
 [[ -f ${HOME}/.common/config ]] && source ${HOME}/.common/config

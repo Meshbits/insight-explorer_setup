@@ -1,6 +1,22 @@
 #!/usr/bin/env bash
 set -e -m
 
+while [[ $# -gt 0 ]]; do
+  key="$1"
+  case $key in
+    *)
+    cat >&2 <<HELP
+Usage: \${HOME}/.komodo/bin/$(basename $0)
+Stop all assetchains list in *coinlist*
+
+-h | --help                           Show this help
+HELP
+      exit 0
+    ;;
+  esac
+  shift
+done
+
 # source profile
 source /etc/profile
 [[ -f ${HOME}/.common/config ]] && source ${HOME}/.common/config
@@ -29,7 +45,7 @@ function komodod_stop () {
     if ! $(ps aux | grep -w "ac_name=${COINNAME}" | grep -v grep >& /dev/null); then
       if $($KOMODO_CLI -ac_name=${COINNAME} getinfo >& /dev/null); then
         echo -e "## Stopping ac_name=${COINNAME} ##"
-        $KOMODO_CLI -ac_name=TXSCL${COINNAME} stop
+        $KOMODO_CLI -ac_name=${COINNAME} stop
         break
       fi
     fi
